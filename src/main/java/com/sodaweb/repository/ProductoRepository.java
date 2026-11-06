@@ -9,6 +9,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
     public List<Producto> findByActivoTrue();
 
+    //Consulta derivada para el menú público: productos activos de categorías activas (HU-01)
+    public List<Producto> findByActivoTrueAndCategoriaActivoTrueOrderByDescripcionAsc();
+
+    //Consulta derivada para el menú público filtrado por una categoría (HU-01)
+    public List<Producto> findByCategoriaIdCategoriaAndActivoTrueOrderByDescripcionAsc(Integer idCategoria);
+
     //Consulta JPQL que busca productos por parte de su descripción y, si se indica, por categoría (HU-10)
     @Query(value = "SELECT p FROM Producto p "
             + "WHERE LOWER(p.descripcion) LIKE LOWER(CONCAT('%', :descripcion, '%')) "

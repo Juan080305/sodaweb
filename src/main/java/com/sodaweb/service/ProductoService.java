@@ -25,6 +25,15 @@ public class ProductoService {
         return productoRepository.findAll();
     }
 
+    // Productos que se muestran a los clientes en el menú (HU-01)
+    @Transactional(readOnly = true)
+    public List<Producto> getMenu(Integer idCategoria) {
+        if (idCategoria == null) {
+            return productoRepository.findByActivoTrueAndCategoriaActivoTrueOrderByDescripcionAsc();
+        }
+        return productoRepository.findByCategoriaIdCategoriaAndActivoTrueOrderByDescripcionAsc(idCategoria);
+    }
+
     @Transactional(readOnly = true)
     public Optional<Producto> getProducto(Integer idProducto) {
         return productoRepository.findById(idProducto);
