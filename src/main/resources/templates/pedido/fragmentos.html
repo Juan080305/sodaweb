@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"/>
+    <body>
+        <!-- fragmento 1: confirmación del pedido para el cliente (HU-04, pantalla C06 del prototipo) -->
+        <section th:fragment="recibido" class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card shadow-sm text-center">
+                        <div class="card-body p-5">
+                            <i class="fa-solid fa-circle-check text-success" style="font-size: 4rem;"></i>
+                            <h2 class="mt-3">[[#{pedido.recibido}]]</h2>
+                            <p class="lead mb-1">[[#{pedido.numero}]] <strong class="text-soda">#[[${pedido.codigo}]]</strong></p>
+                            <span class="badge text-bg-primary fs-6 mb-3" th:text="#{${'pedido.estado.' + pedido.estado}}"></span>
+                            <p class="text-muted">[[#{pedido.recibido.texto}]]</p>
+                            <table class="table table-sm text-start mt-4">
+                                <tr th:each="d : ${pedido.detalles}">
+                                    <td>[[${d.cantidad}]] x [[${d.producto.descripcion}]]</td>
+                                    <td class="text-end text-nowrap" th:text="'₡' + ${#numbers.formatDecimal(d.subtotal, 1, 'WHITESPACE', 0, 'POINT')}"></td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td>[[#{carrito.total}]]</td>
+                                    <td class="text-end text-nowrap" th:text="'₡' + ${#numbers.formatDecimal(pedido.total, 1, 'WHITESPACE', 0, 'POINT')}"></td>
+                                </tr>
+                            </table>
+                            <p class="mb-4"><strong>[[#{pedido.metodoPago}]]:</strong> [[#{${'pedido.metodo.' + pedido.metodoPago}}]]</p>
+                            <a class="btn btn-soda" th:href="@{/}"><i class="fa-solid fa-utensils"></i> [[#{carrito.verMenu}]]</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
