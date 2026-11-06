@@ -34,6 +34,13 @@ public class CarritoController {
         return "/carrito/listado";
     }
 
+    // Devuelve solo el fragmento con la cantidad, se carga en el encabezado (resultBlock)
+    @GetMapping("/contador")
+    public String contador(HttpSession session, Model model) {
+        model.addAttribute("cantidad", carritoService.getCantidad(session));
+        return "/carrito/fragmentos :: contador";
+    }
+
     @PostMapping("/agregar")
     public String agregar(@RequestParam Integer idProducto,
             @RequestParam(required = false) String origen,

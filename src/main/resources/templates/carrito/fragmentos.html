@@ -14,6 +14,10 @@
             </button>
         </form>
 
+        <!-- fragmento con la cantidad de unidades del pedido, se carga en el encabezado -->
+        <span th:fragment="contador" th:if="${cantidad > 0}"
+              class="badge rounded-pill text-bg-warning">[[${cantidad}]]</span>
+
         <!-- fragmento 2 cuando el carrito no tiene productos (pantalla C05 del prototipo) -->
         <section th:fragment="vacio" class="container py-5">
             <div class="card shadow-sm text-center p-5">

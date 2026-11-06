@@ -47,8 +47,7 @@
                             <li class="nav-item px-2">
                                 <a class="nav-link" th:href="@{/carrito/listado}">
                                     <i class="fa-solid fa-basket-shopping"></i> [[#{plantilla.tuPedido}]]
-                                    <span th:if="${session.carritoCantidad != null and session.carritoCantidad > 0}"
-                                          class="badge rounded-pill text-bg-warning">[[${session.carritoCantidad}]]</span>
+                                    <span id="resultBlock" th:data-url="@{/carrito/contador}"></span>
                                 </a>
                             </li>
                             <li class="nav-item dropdown">

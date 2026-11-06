@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CarritoService {
 
     private static final String CARRITO = "carrito";
-    private static final String CANTIDAD = "carritoCantidad";
 
     private final ProductoRepository productoRepository;
 
@@ -66,7 +65,6 @@ public class CarritoService {
             throw new IllegalStateException("No hay más existencias de " + producto.getDescripcion() + ".");
         }
         item.setExistencias(producto.getExistencias());
-        actualizarCantidad(session, items);
     }
 
     // Ninguna cantidad puede ser menor que uno ni mayor que las existencias (HU-03)
@@ -87,18 +85,15 @@ public class CarritoService {
         }
         item.setCantidad(cantidad);
         item.setExistencias(producto.getExistencias());
-        actualizarCantidad(session, items);
     }
 
     public void eliminar(HttpSession session, Integer idProducto) {
         var items = getItems(session);
         items.removeIf(i -> i.getIdProducto().equals(idProducto));
-        actualizarCantidad(session, items);
     }
 
     public void vaciar(HttpSession session) {
         session.removeAttribute(CARRITO);
-        session.removeAttribute(CANTIDAD);
     }
 
     private Item buscarItem(List<Item> items, Integer idProducto) {
@@ -110,12 +105,12 @@ public class CarritoService {
         return null;
     }
 
-    // Se guarda el número de unidades para mostrarlo en el encabezado de todas las páginas
-    private void actualizarCantidad(HttpSession session, List<Item> items) {
+    // Número de unidades del pedido, se muestra en el encabezado de todas las páginas
+    public int getCantidad(HttpSession session) {
         int cantidad = 0;
-        for (Item item : items) {
+        for (Item item : getItems(session)) {
             cantidad += item.getCantidad();
         }
-        session.setAttribute(CANTIDAD, cantidad);
+        return cantidad;
     }
 }
