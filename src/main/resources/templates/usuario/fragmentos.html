@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"/>
+    <body>
+        <!-- 1 Fragmento con formulario unificado para agregar y modificar usuarios con su rol (HU-14) -->
+        <section th:fragment="formulario">
+            <div class="row py-4 mb-2 bg-light">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-3">
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#usuarioModal"
+                            data-modo="agregar"
+                            th:data-titulo="#{usuario.agregar}">
+                        <i class="fa-solid fa-user-plus"></i>
+                        [[#{usuario.agregar}]]
+                    </button>
+                </div>
+            </div>
+            <div class="modal fade" id="usuarioModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="usuarioForm" method="post" th:action="@{/usuario/guardar}" class="was-validated">
+                            <div class="modal-header" id="usuarioModalHeader">
+                                <h5 class="modal-title" id="usuarioModalTitulo"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{accion.cerrar}"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="usuarioId" name="idUsuario"/>
+                                <div class="mb-3">
+                                    <label for="usuarioNombre">[[#{usuario.nombre}]]</label>
+                                    <input type="text" id="usuarioNombre" name="nombre" class="form-control" maxlength="60" required/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="usuarioUsername">[[#{login.username}]]</label>
+                                    <input type="text" id="usuarioUsername" name="username" class="form-control" maxlength="30"
+                                           pattern="[a-zA-Z0-9._\-]{3,30}" required/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="usuarioClave">[[#{login.password}]]</label>
+                                    <input type="password" id="usuarioClave" name="clave" class="form-control" minlength="6"
+                                           autocomplete="new-password"/>
+                                    <small id="usuarioClaveAyuda" class="text-muted">[[#{usuario.clave.ayuda}]]</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="usuarioRol">[[#{usuario.rol}]]</label>
+                                    <select id="usuarioRol" name="idRol" class="form-select" required>
+                                        <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="#{${'rol.' + r.rol}}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" id="usuarioActivo" name="activo" class="form-check-input"/>
+                                    <!-- Si el checkbox no se marca, este campo le indica a Spring que activo = false -->
+                                    <input type="hidden" name="_activo" value="on"/>
+                                    <label for="usuarioActivo" class="form-check-label">[[#{usuario.activo}]]</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa-solid fa-floppy-disk"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 fragmento para el listado de usuarios y sus roles -->
+        <section th:fragment="listado" class="p-3">
+            <div class="row p-3">
+                <div class="col-md-9">
+                    <div class="card p-2">
+                        <div class="card-header"><h4>[[#{usuario.listado}]]</h4></div>
+                        <div class="card-body">
+                            <div th:if="${usuarios != null and !usuarios.empty}" class="table-responsive">
+                                <table class="table table-striped table-hover align-middle">
+                                    <thead><tr><th>#</th>
+                                            <th>[[#{login.username}]]</th>
+                                            <th>[[#{usuario.nombre}]]</th>
+                                            <th>[[#{usuario.roles}]]</th>
+                                            <th>[[#{usuario.activo}]]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="u : ${usuarios}">
+                                            <td>[[${u.idUsuario}]]</td>
+                                            <td class="fw-bold">[[${u.username}]]</td>
+                                            <td>[[${u.nombre}]]</td>
+                                            <td>
+                                                <span th:each="r : ${u.roles}" class="badge text-bg-info me-1" th:text="#{${'rol.' + r.rol}}"></span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${u.activo}" class="badge text-bg-success">[[#{texto.si}]]</span>
+                                                <span th:unless="${u.activo}" class="badge text-bg-secondary">[[#{texto.no}]]</span>
+                                            </td>
+                                            <td class="text-end text-nowrap">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                        th:data-bs-id="${u.idUsuario}"
+                                                        th:data-bs-descripcion="${u.username}">
+                                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#usuarioModal"
+                                                        data-modo="editar"
+                                                        th:data-titulo="#{accion.actualizar}"
+                                                        th:data-id="${u.idUsuario}"
+                                                        th:data-nombre="${u.nombre}"
+                                                        th:data-username="${u.username}"
+                                                        th:data-rol="${u.rolPrincipal != null ? u.rolPrincipal.idRol : ''}"
+                                                        th:data-activo="${u.activo}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                    [[#{accion.actualizar}]]
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center p-2" th:if="${usuarios == null or usuarios.empty}">
+                                <span>[[#{lista.vacia}]]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center bg-success text-white mb-3">
+                        <div class="card-body"><h3>[[#{usuario.total}]]</h3>
+                            <h4 class="fs-2"><i class="fa-solid fa-users"></i> [[${totalUsuarios}]]</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

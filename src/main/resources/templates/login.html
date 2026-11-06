@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}">
+        <title>SodaWeb</title>
+    </head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"/>
+
+        <!-- Inicio de sesión del personal: encargado o administrador (pantalla P01 del prototipo) -->
+        <section class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-soda text-white text-center">
+                            <h4 class="mb-0"><i class="fa-solid fa-user-lock"></i> [[#{login.titulo}]]</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div th:if="${param.error}" class="alert alert-danger">
+                                <i class="fa-solid fa-circle-exclamation"></i> [[#{error.login}]]
+                            </div>
+                            <div th:if="${param.logout}" class="alert alert-success">
+                                <i class="fa-solid fa-circle-check"></i> [[#{login.salio}]]
+                            </div>
+                            <form th:action="@{/login}" method="post">
+                                <div class="mb-3">
+                                    <label for="username">[[#{login.username}]]</label>
+                                    <input type="text" id="username" name="username" class="form-control" required autofocus/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password">[[#{login.password}]]</label>
+                                    <input type="password" id="password" name="password" class="form-control" required/>
+                                </div>
+                                <button type="submit" class="btn btn-soda w-100">
+                                    <i class="fa-solid fa-right-to-bracket"></i> [[#{login.login}]]
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer th:replace="~{general/fragmentos :: footer}"/>
+    </body>
+</html>
