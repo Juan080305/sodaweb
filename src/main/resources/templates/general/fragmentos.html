@@ -34,8 +34,12 @@
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                                     [[#{plantilla.admin}]]</a>
                                 <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" th:href="@{/producto/listado}">
+                                            <i class="fa-solid fa-bowl-food"></i> [[#{plantilla.productos}]]</a></li>
                                     <li><a class="dropdown-item" th:href="@{/categoria/listado}">
                                             <i class="fa-solid fa-layer-group"></i> [[#{plantilla.categorias}]]</a></li>
+                                    <li><a class="dropdown-item" th:href="@{/producto/alertas}">
+                                            <i class="fa-solid fa-triangle-exclamation"></i> [[#{plantilla.alertas}]]</a></li>
                                 </ul>
                             </li>
                         </ul>
