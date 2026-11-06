@@ -1,0 +1,70 @@
+package com.sodaweb.domain;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import lombok.*;
+
+@Data
+@Entity
+@Table(name = "producto")
+public class Producto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_producto")
+    private Integer idProducto;
+    //private Integer idCategoria;  ya no se usa por la anotación @ManyToOne
+
+    @Column(nullable = false, length = 50)
+    @NotBlank(message = "La descripción no puede estar vacía.")
+    @Size(max = 50, message = "La descripción no puede tener más de 50 caracteres.")
+    private String descripcion;
+
+    @Column(columnDefinition = "TEXT")
+    private String detalle;
+
+    @Column(precision = 12, scale = 2)
+    @NotNull(message = "El precio no puede estar vacío.")
+    @DecimalMin(value = "0.01", inclusive = true, message = "El precio debe ser mayor a 0.")
+    private BigDecimal precio;
+
+    @NotNull(message = "El campo de existencias no puede estar vacío.")
+    @Min(value = 0, message = "Las existencias deben ser un número mayor o igual a 0.")
+    private Integer existencias;
+
+    // HU-12: nivel límite para que el sistema genere una alerta de stock
+    @Column(name = "stock_minimo", nullable = false)
+    @NotNull(message = "El stock mínimo no puede estar vacío.")
+    @Min(value = 0, message = "El stock mínimo debe ser un número mayor o igual a 0.")
+    private Integer stockMinimo;
+
+    // HU-12: tipo de alerta (Critica, Media o Baja)
+    @Column(name = "tipo_alerta", nullable = false)
+    @NotBlank(message = "Debe seleccionar el tipo de alerta.")
+    private String tipoAlerta;
+
+    @Column(name = "ruta_imagen", length = 1024)
+    @Size(max = 1024)
+    private String rutaImagen;
+
+    @Column(nullable = false)
+    private boolean activo = true;
+
+    @ManyToOne
+    @JoinColumn(name = "id_categoria")
+    private Categoria categoria;
+
+    // El producto está agotado si no tiene existencias (HU-02)
+    public boolean isAgotado() {
+        return existencias == null || existencias <= 0;
+    }
+
+    // El producto requiere reabastecerse si llegó al stock mínimo (HU-12)
+    public boolean isEnAlerta() {
+        return existencias != null && stockMinimo != null && existencias <= stockMinimo;
+    }
+}
