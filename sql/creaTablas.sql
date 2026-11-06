@@ -105,6 +105,53 @@ create table proveedor (
   unique (nombre))
   ENGINE = InnoDB;
 
+-- Tabla de usuarios del personal (HU-14)
+CREATE TABLE usuario (
+  id_usuario INT NOT NULL AUTO_INCREMENT,
+  username varchar(30) NOT NULL UNIQUE,
+  password varchar(512) NOT NULL,
+  nombre VARCHAR(60) NOT NULL,
+  activo boolean NOT NULL DEFAULT TRUE,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_usuario),
+  index ndx_username (username))
+  ENGINE = InnoDB;
+
+-- Tabla de roles (HU-14)
+create table rol (
+  id_rol INT NOT NULL AUTO_INCREMENT,
+  rol varchar(25) NOT NULL unique,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  primary key (id_rol))
+  ENGINE = InnoDB;
+
+-- Tabla de relacion entre usuarios y roles
+create table usuario_rol (
+  id_usuario int not null,
+  id_rol INT NOT NULL,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_usuario, id_rol),
+  foreign key fk_usuarioRol_usuario (id_usuario) references usuario(id_usuario),
+  foreign key fk_usuarioRol_rol (id_rol) references rol(id_rol))
+  ENGINE = InnoDB;
+
+-- Tabla de rutas: que rol puede entrar a cada ruta
+CREATE TABLE ruta (
+  id_ruta INT AUTO_INCREMENT NOT NULL,
+  ruta VARCHAR(255) NOT NULL,
+  id_rol INT NULL,
+  requiere_rol boolean NOT NULL DEFAULT TRUE,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CHECK ((requiere_rol = TRUE AND id_rol IS NOT NULL) OR (requiere_rol = FALSE AND id_rol IS NULL)),
+  PRIMARY KEY (id_ruta),
+  UNIQUE (ruta),
+  FOREIGN KEY (id_rol) REFERENCES rol(id_rol))
+  ENGINE = InnoDB;
+
 -- --- Seccion de Insercion de Datos ---
 
 -- Insercion de categorias (las mismas del prototipo en Figma)
@@ -134,3 +181,40 @@ INSERT INTO proveedor (nombre, contacto, telefono, correo, productos, activo) VA
 ('Verduleria El Mercado', 'Carlos Rojas', '8811-2233', 'ventas@elmercado.cr', 'Verduras, platano, yuca, chayote', true),
 ('Lacteos La Montana', 'Marta Solis', '8722-4455', 'pedidos@lamontana.cr', 'Natilla, queso tierno, leche', true),
 ('Cafe Tarrazu Directo', 'Luis Mora', '8633-6677', NULL, 'Cafe molido', true);
+
+-- Insercion de roles
+insert into rol (rol) values ('ADMIN'), ('ENCARGADO');
+
+-- Insercion de usuarios (claves cifradas con BCrypt)
+-- admin / admin123      encargado / encargado123
+INSERT INTO usuario (username, password, nombre, activo) VALUES
+('admin', '$2a$10$1onwQpSfFfYUPLhiLbRgyeqYtnBDthA5iuPjJDuel9TosSaXRSAE6', 'Administrador SodaWeb', true),
+('encargado', '$2a$10$/6jseP4iGZBeQ6pJZ152/ux9ZZGD8AHUhEb9PRFCY46Yel2VnMqO2', 'Encargado de turno', true);
+
+-- Asignacion de roles a usuarios (el administrador tambien atiende pedidos)
+insert into usuario_rol (id_usuario, id_rol) values
+(1, 1), (1, 2), (2, 2);
+
+-- Insercion de rutas con roles especificos
+INSERT INTO ruta (ruta, id_rol) VALUES
+('/producto/**', 1),
+('/categoria/**', 1),
+('/proveedor/**', 1),
+('/usuario/**', 1),
+('/pedido/listado', 2),
+('/pedido/detalle/**', 2),
+('/pedido/avanzar', 2);
+
+-- Insercion de rutas que no requieren rol
+INSERT INTO ruta (ruta, requiere_rol) VALUES
+('/', false),
+('/menu/**', false),
+('/carrito/**', false),
+('/pedido/confirmar', false),
+('/pedido/recibido/**', false),
+('/login', false),
+('/acceso_denegado', false),
+('/error', false),
+('/js/**', false),
+('/css/**', false),
+('/webjars/**', false);

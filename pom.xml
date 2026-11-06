@@ -71,6 +71,16 @@
             <artifactId>webjars-locator-lite</artifactId>
         </dependency>
 
+        <!-- Seguridad: autenticación, roles y etiquetas sec: en Thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity6</artifactId>
+        </dependency>
+
         <!-- MySQL e Hibernate por medio de JPA -->
         <dependency>
             <groupId>com.mysql</groupId>

@@ -14,6 +14,7 @@ Aplicación web responsiva para que los clientes consulten el menú por categor�
 - Thymeleaf con fragmentos reutilizables e internacionalización (español / inglés)
 - Bootstrap 5, Font Awesome y jQuery por medio de webjars
 - MySQL 8
+- Spring Security con usuarios, roles y contraseñas cifradas (BCrypt)
 - Lombok
 - Maven (NetBeans)
 
@@ -27,11 +28,11 @@ Aplicación web responsiva para que los clientes consulten el menú por categor�
 ## Estructura (MVC)
 ```
 com.sodaweb
-├── ProjectConfig          → plantillas, idioma (LocaleResolver) y messageSource
-├── domain                 → Categoria, Producto, Pedido, DetallePedido, Item (carrito), Proveedor
+├── ProjectConfig          → plantillas, idioma, messageSource y seguridad (SecurityFilterChain)
+├── domain                 → Categoria, Producto, Pedido, DetallePedido, Item (carrito), Proveedor, Usuario, Rol, Ruta
 ├── repository             → interfaces JpaRepository con consultas derivadas y JPQL
 ├── service                → reglas de negocio con @Transactional
-└── controller             → Index, Categoria, Producto, Carrito, Pedido y Proveedor
+└── controller             → Index, Categoria, Producto, Carrito, Pedido, Proveedor y Usuario
 templates
 ├── general/fragmentos     → head, header, footer, mostrarToast, confirmarEliminar
 ├── menu, carrito, pedido, producto, categoria, proveedor → fragmentos.html + vistas
@@ -49,9 +50,10 @@ templates
 | `/producto/alertas` | Administrador | HU-12 |
 | `/categoria/listado` | Administrador | HU-09, HU-11 |
 | `/proveedor/listado` | Administrador | HU-13 |
+| `/usuario/listado`, `/login` | Administrador / Personal | HU-14 |
 
 ## Estado del avance 2
-Historias implementadas: **13 de 14 (93 %)**, incluidas todas las de prioridad alta del flujo del cliente y del encargado.
+Historias implementadas: **14 de 14 (100 %)**, incluidas todas las de prioridad alta del flujo del cliente y del encargado.
 
 | ID | Historia | Estado |
 |---|---|---|
@@ -59,7 +61,7 @@ Historias implementadas: **13 de 14 (93 %)**, incluidas todas las de prioridad a
 | HU-02 | Ver el detalle de un producto (agotado no se puede agregar) | ✅ Implementada |
 | HU-03 | Agregar productos al carrito y modificar cantidades | ✅ Implementada |
 | HU-04 | Confirmar pedido para retiro con nombre, teléfono y método de pago | ✅ Implementada |
-| HU-05 | Visualizar los pedidos nuevos y sus detalles | ✅ Implementada (falta restringir por rol, ver HU-14) |
+| HU-05 | Visualizar los pedidos nuevos y sus detalles (solo encargado) | ✅ Implementada |
 | HU-06 | Actualizar el estado de los pedidos sin retroceder | ✅ Implementada |
 | HU-07 | Registrar y actualizar productos, precios y disponibilidad | ✅ Implementada |
 | HU-08 | Registrar productos (AF-01) | ✅ Implementada |
@@ -68,9 +70,15 @@ Historias implementadas: **13 de 14 (93 %)**, incluidas todas las de prioridad a
 | HU-11 | Modificar categoría (AF-04) | ✅ Implementada |
 | HU-12 | Alerta de stock con mínimo y tipo de alerta (AF-05) | ✅ Implementada |
 | HU-13 | Proveedores con búsqueda por nombre (AF-06) | ✅ Implementada |
-| HU-14 | Roles de usuario e inicio de sesión (AF-07) | ⏳ Pendiente |
+| HU-14 | Roles de usuario e inicio de sesión (AF-07) | ✅ Implementada |
 
-**Pendiente para el siguiente avance:** Spring Security con roles Administrador y Encargado (HU-14), que protegerá `/pedido/listado`, `/producto/**` y `/categoria/**`.
+## Usuarios de prueba
+| Usuario | Clave | Rol | Puede entrar a |
+|---|---|---|---|
+| `admin` | `admin123` | Administrador (y encargado) | Productos, categorías, alertas, proveedores, usuarios y pedidos |
+| `encargado` | `encargado123` | Encargado | Pedidos de hoy |
+
+Los permisos de cada ruta se leen de la tabla `ruta` (Spring Security). El menú, el carrito y la confirmación del pedido son públicos.
 
 ## Trabajo por ramas
 Ver [ACUERDO_RAMAS.md](ACUERDO_RAMAS.md). Cada historia se trabaja en una rama `feature/...` y se integra a `develop` por Pull Request revisado por otro integrante.
