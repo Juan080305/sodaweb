@@ -1,0 +1,54 @@
+/* Colores de SodaWeb tomados del prototipo de Figma (Avance 1) */
+body {
+    background-color: #FFF8F1;
+    color: #2B1F17;
+}
+
+.bg-soda {
+    background-color: #1F6B45;
+}
+
+.bg-soda-claro {
+    background-color: #E4F2E9;
+}
+
+.text-soda {
+    color: #1F6B45;
+}
+
+.btn-soda {
+    background-color: #E4572E;
+    border-color: #E4572E;
+    color: #FFFFFF;
+}
+
+.btn-soda:hover,
+.btn-soda:focus {
+    background-color: #C4421D;
+    border-color: #C4421D;
+    color: #FFFFFF;
+}
+
+.nav-underline .nav-link.active {
+    color: #1F6B45;
+    font-weight: 600;
+}
+
+/* Las tarjetas del menú "crecen" cuando el mouse pasa sobre ellas */
+.tarjeta {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.tarjeta:hover {
+    transform: scale(1.03);
+    box-shadow: 0 .5rem 1rem rgba(43, 31, 23, .15) !important;
+}
+
+.imagen-producto {
+    height: 200px;
+}
+
+.imagen-producto img {
+    max-height: 100%;
+    object-fit: contain;
+}
