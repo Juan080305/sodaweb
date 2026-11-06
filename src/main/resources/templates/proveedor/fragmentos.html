@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}"/>
+    <body>
+        <!-- 1 Fragmento con formulario unificado para agregar y modificar proveedor (HU-13) -->
+        <section th:fragment="formulario">
+            <div class="row py-4 mb-2 bg-light">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-3">
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#proveedorModal"
+                            data-modo="agregar"
+                            th:data-titulo="#{proveedor.agregar}">
+                        <i class="fa-solid fa-plus"></i>
+                        [[#{proveedor.agregar}]]
+                    </button>
+                </div>
+            </div>
+            <div class="modal fade" id="proveedorModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form id="proveedorForm" method="post" th:action="@{/proveedor/guardar}" class="was-validated">
+                            <div class="modal-header" id="proveedorModalHeader">
+                                <h5 class="modal-title" id="proveedorModalTitulo"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" th:aria-label="#{accion.cerrar}"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="proveedorId" name="idProveedor"/>
+                                <div class="mb-3">
+                                    <label for="proveedorNombre">[[#{proveedor.nombre}]]</label>
+                                    <input type="text" id="proveedorNombre" name="nombre" class="form-control" maxlength="60" required/>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="proveedorContacto">[[#{proveedor.contacto}]]</label>
+                                    <input type="text" id="proveedorContacto" name="contacto" class="form-control" maxlength="60" required/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="proveedorTelefono">[[#{proveedor.telefono}]]</label>
+                                        <input type="tel" id="proveedorTelefono" name="telefono" class="form-control" maxlength="25"
+                                               pattern="[0-9 +\-]{8,25}" placeholder="8888-0000" required/>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="proveedorCorreo">[[#{proveedor.correo}]]</label>
+                                        <input type="email" id="proveedorCorreo" name="correo" class="form-control" maxlength="75"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="proveedorProductos">[[#{proveedor.productos}]]</label>
+                                    <input type="text" id="proveedorProductos" name="productos" class="form-control" maxlength="255"
+                                           th:placeholder="#{proveedor.productos.ejemplo}"/>
+                                </div>
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" id="proveedorActivo" name="activo" class="form-check-input"/>
+                                    <!-- Si el checkbox no se marca, este campo le indica a Spring que activo = false -->
+                                    <input type="hidden" name="_activo" value="on"/>
+                                    <label for="proveedorActivo" class="form-check-label">[[#{proveedor.activo}]]</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-xmark"></i> [[#{accion.cerrar}]]
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa-solid fa-floppy-disk"></i> [[#{accion.guardar}]]
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 Fragmento para buscar al proveedor por medio de su nombre (HU-13) -->
+        <section th:fragment="buscar" class="px-3">
+            <form method="post" th:action="@{/proveedor/buscar}" class="row g-2 align-items-end px-3">
+                <div class="col-md-6">
+                    <label for="buscarNombre">[[#{proveedor.nombre}]]</label>
+                    <input type="text" id="buscarNombre" name="nombre" th:value="${nombre}" class="form-control"/>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-magnifying-glass"></i> [[#{accion.buscar}]]
+                    </button>
+                    <a class="btn btn-outline-secondary" th:href="@{/proveedor/listado}">[[#{consultas.todas}]]</a>
+                </div>
+            </form>
+        </section>
+
+        <!-- 3 fragmento para el listado de proveedores -->
+        <section th:fragment="listado" class="p-3">
+            <div class="row p-3">
+                <div class="col-md-9">
+                    <div class="card p-2">
+                        <div class="card-header"><h4>[[#{proveedor.listado}]]</h4></div>
+                        <div class="card-body">
+                            <div th:if="${proveedores != null and !proveedores.empty}" class="table-responsive">
+                                <table class="table table-striped table-hover align-middle">
+                                    <thead><tr><th>#</th>
+                                            <th>[[#{proveedor.nombre}]]</th>
+                                            <th>[[#{proveedor.contacto}]]</th>
+                                            <th>[[#{proveedor.telefono}]]</th>
+                                            <th>[[#{proveedor.productos}]]</th>
+                                            <th>[[#{proveedor.activo}]]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="p : ${proveedores}">
+                                            <td>[[${p.idProveedor}]]</td>
+                                            <td>[[${p.nombre}]]
+                                                <div class="small text-muted" th:if="${p.correo != null}">[[${p.correo}]]</div>
+                                            </td>
+                                            <td>[[${p.contacto}]]</td>
+                                            <td class="text-nowrap">[[${p.telefono}]]</td>
+                                            <td>[[${p.productos}]]</td>
+                                            <td>
+                                                <span th:if="${p.activo}" class="badge text-bg-success">[[#{texto.si}]]</span>
+                                                <span th:unless="${p.activo}" class="badge text-bg-secondary">[[#{texto.no}]]</span>
+                                            </td>
+                                            <td class="text-end text-nowrap">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                        data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                                        th:data-bs-id="${p.idProveedor}"
+                                                        th:data-bs-descripcion="${p.nombre}">
+                                                    <i class="fa-solid fa-trash"></i> [[#{accion.eliminar}]]
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-warning btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#proveedorModal"
+                                                        data-modo="editar"
+                                                        th:data-titulo="#{accion.actualizar}"
+                                                        th:data-id="${p.idProveedor}"
+                                                        th:data-nombre="${p.nombre}"
+                                                        th:data-contacto="${p.contacto}"
+                                                        th:data-telefono="${p.telefono}"
+                                                        th:data-correo="${p.correo != null ? p.correo : ''}"
+                                                        th:data-productos="${p.productos != null ? p.productos : ''}"
+                                                        th:data-activo="${p.activo}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                    [[#{accion.actualizar}]]
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center p-2" th:if="${proveedores == null or proveedores.empty}">
+                                <span>[[#{lista.vacia}]]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center bg-success text-white mb-3">
+                        <div class="card-body"><h3>[[#{proveedor.total}]]</h3>
+                            <h4 class="fs-2"><i class="fa-solid fa-truck"></i> [[${totalProveedores}]]</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

@@ -28,13 +28,13 @@ Aplicación web responsiva para que los clientes consulten el menú por categor�
 ```
 com.sodaweb
 ├── ProjectConfig          → plantillas, idioma (LocaleResolver) y messageSource
-├── domain                 → Categoria, Producto, Pedido, DetallePedido, Item (carrito)
+├── domain                 → Categoria, Producto, Pedido, DetallePedido, Item (carrito), Proveedor
 ├── repository             → interfaces JpaRepository con consultas derivadas y JPQL
 ├── service                → reglas de negocio con @Transactional
-└── controller             → Index, Categoria, Producto, Carrito y Pedido
+└── controller             → Index, Categoria, Producto, Carrito, Pedido y Proveedor
 templates
 ├── general/fragmentos     → head, header, footer, mostrarToast, confirmarEliminar
-├── menu, carrito, pedido, producto, categoria → fragmentos.html + vistas
+├── menu, carrito, pedido, producto, categoria, proveedor → fragmentos.html + vistas
 ```
 
 ## Rutas principales
@@ -48,9 +48,10 @@ templates
 | `/producto/listado` | Administrador | HU-07, HU-08, HU-10 |
 | `/producto/alertas` | Administrador | HU-12 |
 | `/categoria/listado` | Administrador | HU-09, HU-11 |
+| `/proveedor/listado` | Administrador | HU-13 |
 
 ## Estado del avance 2
-Historias implementadas: **12 de 14 (86 %)**, incluidas todas las de prioridad alta del flujo del cliente y del encargado.
+Historias implementadas: **13 de 14 (93 %)**, incluidas todas las de prioridad alta del flujo del cliente y del encargado.
 
 | ID | Historia | Estado |
 |---|---|---|
@@ -66,10 +67,10 @@ Historias implementadas: **12 de 14 (86 %)**, incluidas todas las de prioridad a
 | HU-10 | Modificar productos con búsqueda por nombre y categoría (AF-03) | ✅ Implementada |
 | HU-11 | Modificar categoría (AF-04) | ✅ Implementada |
 | HU-12 | Alerta de stock con mínimo y tipo de alerta (AF-05) | ✅ Implementada |
-| HU-13 | Proveedores (AF-06) | ⏳ Pendiente |
+| HU-13 | Proveedores con búsqueda por nombre (AF-06) | ✅ Implementada |
 | HU-14 | Roles de usuario e inicio de sesión (AF-07) | ⏳ Pendiente |
 
-**Pendiente para el siguiente avance:** módulo de proveedores (HU-13) y Spring Security con roles Administrador y Encargado (HU-14), que protegerá `/pedido/listado`, `/producto/**` y `/categoria/**`.
+**Pendiente para el siguiente avance:** Spring Security con roles Administrador y Encargado (HU-14), que protegerá `/pedido/listado`, `/producto/**` y `/categoria/**`.
 
 ## Trabajo por ramas
 Ver [ACUERDO_RAMAS.md](ACUERDO_RAMAS.md). Cada historia se trabaja en una rama `feature/...` y se integra a `develop` por Pull Request revisado por otro integrante.
