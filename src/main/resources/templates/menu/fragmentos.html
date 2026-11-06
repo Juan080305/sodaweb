@@ -53,9 +53,13 @@
                                 <span class="text-success h5" th:text="'₡' + ${#numbers.formatDecimal(p.precio, 1, 'WHITESPACE', 0, 'POINT')}">₡0</span>
                                 <span th:if="${p.agotado}" class="badge text-bg-danger ms-2">[[#{menu.agotado}]]</span>
                             </div>
-                            <a th:href="@{/menu/producto/{id}(id=${p.idProducto})}" class="btn btn-sm btn-outline-success">
-                                [[#{menu.verDetalle}]]
-                            </a>
+                            <div class="text-nowrap">
+                                <a th:href="@{/menu/producto/{id}(id=${p.idProducto})}" class="btn btn-sm btn-outline-success"
+                                   th:title="#{menu.verDetalle}">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <form th:replace="~{carrito/fragmentos :: agregar(${p}, ${idCategoriaActual == null ? '/' : '/menu/' + idCategoriaActual}, 'btn btn-sm btn-soda')}"></form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -86,6 +90,7 @@
                             </p>
 
                             <div class="d-flex flex-wrap gap-2 mt-3">
+                                <form th:replace="~{carrito/fragmentos :: agregar(${producto}, ${'/menu/producto/' + producto.idProducto}, 'btn btn-soda')}"></form>
                                 <a th:href="@{/menu/{id}(id=${producto.categoria.idCategoria})}" class="btn btn-outline-secondary">
                                     <i class="fa-solid fa-arrow-left"></i> [[#{menu.regresar}]]
                                 </a>
