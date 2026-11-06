@@ -90,6 +90,21 @@ create table detalle_pedido (
   foreign key fk_detalle_producto (id_producto) references producto(id_producto))
   ENGINE = InnoDB;
 
+-- Tabla de proveedores (HU-13), independiente en el MVP
+create table proveedor (
+  id_proveedor INT NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(60) NOT NULL,
+  contacto VARCHAR(60) NOT NULL,
+  telefono VARCHAR(25) NOT NULL,
+  correo VARCHAR(75),
+  productos VARCHAR(255),
+  activo boolean NOT NULL DEFAULT TRUE,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_proveedor),
+  unique (nombre))
+  ENGINE = InnoDB;
+
 -- --- Seccion de Insercion de Datos ---
 
 -- Insercion de categorias (las mismas del prototipo en Figma)
@@ -113,3 +128,9 @@ INSERT INTO producto (id_categoria, descripcion, detalle, precio, existencias, s
 (4, 'Cafe chorreado', 'Cafe costarricense chorreado, negro o con leche.', 800, 30, 10, 'Baja', NULL, true),
 (5, 'Arroz con leche', 'Arroz con leche casero con canela.', 1200, 6, 8, 'Media', NULL, true),
 (5, 'Tres leches', 'Porcion de queque tres leches con merengue.', 1500, 0, 4, 'Media', NULL, true);
+
+-- Insercion de proveedores
+INSERT INTO proveedor (nombre, contacto, telefono, correo, productos, activo) VALUES
+('Verduleria El Mercado', 'Carlos Rojas', '8811-2233', 'ventas@elmercado.cr', 'Verduras, platano, yuca, chayote', true),
+('Lacteos La Montana', 'Marta Solis', '8722-4455', 'pedidos@lamontana.cr', 'Natilla, queso tierno, leche', true),
+('Cafe Tarrazu Directo', 'Luis Mora', '8633-6677', NULL, 'Cafe molido', true);
