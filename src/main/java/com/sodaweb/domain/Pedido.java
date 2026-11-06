@@ -58,4 +58,17 @@ public class Pedido implements Serializable {
     public String getCodigo() {
         return idPedido == null ? "" : String.format("SW-%04d", idPedido);
     }
+
+    // HU-06: el estado solo avanza, nunca retrocede. Devuelve null si ya fue entregado.
+    public String getSiguienteEstado() {
+        if (estado == null) {
+            return null;
+        }
+        return switch (estado) {
+            case "Recibido" -> "Preparacion";
+            case "Preparacion" -> "Listo";
+            case "Listo" -> "Entregado";
+            default -> null;
+        };
+    }
 }

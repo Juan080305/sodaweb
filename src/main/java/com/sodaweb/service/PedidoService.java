@@ -8,6 +8,7 @@ import com.sodaweb.repository.DetallePedidoRepository;
 import com.sodaweb.repository.PedidoRepository;
 import com.sodaweb.repository.ProductoRepository;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,29 @@ public class PedidoService {
     @Transactional(readOnly = true)
     public Optional<Pedido> getPedido(Integer idPedido) {
         return pedidoRepository.findById(idPedido);
+    }
+
+    // HU-05: pedidos del día, todos o solo los de un estado
+    @Transactional(readOnly = true)
+    public List<Pedido> getPedidosHoy(String estado) {
+        LocalDateTime inicioDelDia = LocalDate.now().atStartOfDay();
+        if (estado == null || estado.isBlank()) {
+            return pedidoRepository.findByFechaAfterOrderByFechaDesc(inicioDelDia);
+        }
+        return pedidoRepository.findByEstadoAndFechaAfterOrderByFechaAsc(estado, inicioDelDia);
+    }
+
+    // HU-06: avanza el pedido al siguiente estado; no se permite retroceder
+    @Transactional
+    public Pedido avanzarEstado(Integer idPedido) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new IllegalArgumentException("El pedido con ID " + idPedido + " no existe."));
+        String siguiente = pedido.getSiguienteEstado();
+        if (siguiente == null) {
+            throw new IllegalStateException("El pedido " + pedido.getCodigo() + " ya fue entregado.");
+        }
+        pedido.setEstado(siguiente);
+        return pedidoRepository.save(pedido);
     }
 
     /* HU-04: registra el pedido y su detalle en una sola transacción.

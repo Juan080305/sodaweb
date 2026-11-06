@@ -65,6 +65,47 @@ public class PedidoController {
         return "/pedido/recibido";
     }
 
+    // HU-05: el encargado visualiza los pedidos del día y puede filtrarlos por estado
+    @GetMapping("/listado")
+    public String listado(@RequestParam(required = false) String estado, Model model) {
+        var pedidos = pedidoService.getPedidosHoy(estado);
+        model.addAttribute("pedidos", pedidos);
+        model.addAttribute("totalPedidos", pedidos.size());
+        model.addAttribute("estadoActual", estado);
+        return "/pedido/listado";
+    }
+
+    // HU-05: detalle con productos, cantidades, observaciones y datos de contacto
+    @GetMapping("/detalle/{idPedido}")
+    public String detalle(@PathVariable("idPedido") Integer idPedido, Model model,
+            RedirectAttributes redirectAttributes) {
+        var pedidoOptional = pedidoService.getPedido(idPedido);
+        if (pedidoOptional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", mensaje("pedido.error03"));
+            return "redirect:/pedido/listado";
+        }
+        model.addAttribute("pedido", pedidoOptional.get());
+        return "/pedido/detalle";
+    }
+
+    // HU-06: avanza el estado del pedido (sin opción de retroceder)
+    @PostMapping("/avanzar")
+    public String avanzar(@RequestParam Integer idPedido, RedirectAttributes redirectAttributes) {
+        String titulo = "todoOk";
+        String detalle = mensaje("pedido.estadoActualizado");
+        try {
+            pedidoService.avanzarEstado(idPedido);
+        } catch (IllegalArgumentException e) {
+            titulo = "error";
+            detalle = mensaje("pedido.error03");
+        } catch (IllegalStateException e) {
+            titulo = "error";
+            detalle = mensaje("pedido.error04");
+        }
+        redirectAttributes.addFlashAttribute(titulo, detalle);
+        return "redirect:/pedido/detalle/" + idPedido;
+    }
+
     private String mensaje(String clave) {
         return messageSource.getMessage(clave, null, LocaleContextHolder.getLocale());
     }
