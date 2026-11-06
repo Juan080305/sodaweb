@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+    <head th:replace="~{general/fragmentos :: head}">
+        <title>SodaWeb</title>
+    </head>
+    <body>
+        <header th:replace="~{general/fragmentos :: header}"/>
+
+        <th:block th:if="${items.empty}">
+            <section th:replace="~{carrito/fragmentos :: vacio}"/>
+        </th:block>
+        <div th:unless="${items.empty}" class="container py-4">
+            <div class="row">
+                <div class="col-lg-7">
+                    <section th:replace="~{carrito/fragmentos :: items}"/>
+                </div>
+                <div class="col-lg-5">
+                    <section th:replace="~{carrito/fragmentos :: confirmar}"/>
+                </div>
+            </div>
+        </div>
+        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
+
+        <footer th:replace="~{general/fragmentos :: footer}"/>
+        <script th:src="@{/js/modulos/carrito.js}"></script>
+    </body>
+</html>

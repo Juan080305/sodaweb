@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.List;
 import lombok.*;
 
 @Data
@@ -29,4 +30,12 @@ public class Categoria implements Serializable {
 
     @Column(nullable = false)
     private boolean activo = true;
+
+    // Relación de uno a muchos con la clase Producto
+    // Sin "cascade" ni "orphanRemoval" para evitar la propagación de operaciones.
+    // Se excluye de toString/hashCode para evitar un ciclo infinito Categoria <-> Producto
+    @OneToMany(mappedBy = "categoria")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Producto> productos;
 }

@@ -31,3 +31,14 @@ document.addEventListener('DOMContentLoaded', function () {
             toast.classList.remove('show'));
     }, 4000);
 });
+
+//Para cargar en el encabezado la cantidad de productos del pedido
+document.addEventListener('DOMContentLoaded', function () {
+    const resultBlock = document.getElementById('resultBlock');
+    if (!resultBlock) {
+        return;
+    }
+    fetch(resultBlock.getAttribute('data-url'))
+            .then(respuesta => respuesta.text())
+            .then(html => resultBlock.innerHTML = html);
+});

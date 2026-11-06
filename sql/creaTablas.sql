@@ -90,28 +90,47 @@ create table detalle_pedido (
   foreign key fk_detalle_producto (id_producto) references producto(id_producto))
   ENGINE = InnoDB;
 
+-- Tabla de proveedores (HU-13), independiente en el MVP
+create table proveedor (
+  id_proveedor INT NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(60) NOT NULL,
+  contacto VARCHAR(60) NOT NULL,
+  telefono VARCHAR(25) NOT NULL,
+  correo VARCHAR(75),
+  productos VARCHAR(255),
+  activo boolean NOT NULL DEFAULT TRUE,
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_proveedor),
+  unique (nombre))
+  ENGINE = InnoDB;
+
 -- --- Seccion de Insercion de Datos ---
 
--- Insercion de categorias
+-- Insercion de categorias (las mismas del prototipo en Figma)
 INSERT INTO categoria (descripcion, ruta_imagen, activo) VALUES
 ('Desayunos', NULL, true),
 ('Casados', NULL, true),
-('Bocadillos', NULL, true),
-('Bebidas naturales', NULL, true),
-('Reposteria', NULL, true);
+('Especiales', NULL, true),
+('Bebidas', NULL, true),
+('Postres', NULL, true);
 
--- Insercion de productos
+-- Insercion de productos (las imagenes se registran como URL en la nube desde el mantenimiento)
 INSERT INTO producto (id_categoria, descripcion, detalle, precio, existencias, stock_minimo, tipo_alerta, ruta_imagen, activo) VALUES
-(1, 'Gallo pinto con huevo', 'Gallo pinto de la casa con huevo frito o picado, natilla y tortilla palmeada.', 2800, 25, 5, 'Critica', NULL, true),
-(1, 'Pinto completo', 'Gallo pinto, huevo, queso frito, platano maduro, natilla y tortilla.', 3900, 20, 5, 'Critica', NULL, true),
-(1, 'Tortilla con queso', 'Tortilla palmeada hecha al momento con queso tierno.', 1800, 3, 5, 'Media', NULL, true),
-(2, 'Casado con pollo', 'Arroz, frijoles, ensalada, platano maduro, picadillo del dia y pollo en salsa.', 3800, 15, 4, 'Critica', NULL, true),
-(2, 'Casado con bistec', 'Arroz, frijoles, ensalada, platano maduro, picadillo del dia y bistec encebollado.', 4200, 12, 4, 'Critica', NULL, true),
-(2, 'Casado vegetariano', 'Arroz, frijoles, ensalada, platano maduro, picadillo y huevo frito.', 3300, 0, 3, 'Media', NULL, true),
-(3, 'Empanada de queso', 'Empanada de maiz rellena de queso, recien frita.', 1200, 18, 6, 'Media', NULL, true),
-(3, 'Arreglado de pollo', 'Pan suave con pollo deshilachado, repollo y salsa de la casa.', 1500, 10, 4, 'Baja', NULL, true),
-(4, 'Fresco de cas', 'Fresco natural de cas en agua, vaso de 500 ml.', 1000, 30, 8, 'Baja', NULL, true),
-(4, 'Batido de fresa en leche', 'Batido de fresa natural en leche, vaso de 500 ml.', 1600, 4, 6, 'Media', NULL, true),
-(4, 'Cafe chorreado', 'Cafe costarricense chorreado al momento.', 900, 40, 10, 'Baja', NULL, true),
-(5, 'Tres leches', 'Porcion de queque tres leches de la casa.', 1700, 8, 3, 'Baja', NULL, true),
-(5, 'Arroz con leche', 'Arroz con leche con canela, porcion individual.', 1300, 0, 3, 'Baja', NULL, false);
+(1, 'Gallo pinto con huevo', 'Gallo pinto con huevo al gusto, natilla, platano maduro y tortilla.', 2800, 18, 5, 'Baja', NULL, true),
+(1, 'Tortilla con queso', 'Tortilla palmeada hecha al momento con queso tierno.', 1800, 10, 4, 'Baja', NULL, true),
+(2, 'Casado con pollo', 'Arroz, frijoles, ensalada, picadillo del dia, platano maduro y pollo en salsa.', 3800, 25, 8, 'Baja', NULL, true),
+(2, 'Casado con bistec', 'Arroz, frijoles, ensalada, picadillo, maduro y bistec de res encebollado.', 4200, 12, 5, 'Baja', NULL, true),
+(2, 'Casado con pescado', 'Arroz, frijoles, ensalada, picadillo, maduro y filete de pescado empanizado.', 4500, 0, 5, 'Critica', NULL, true),
+(3, 'Olla de carne', 'Sopa de res con yuca, elote, chayote y zanahoria. Arroz aparte.', 4000, 9, 4, 'Baja', NULL, true),
+(3, 'Chifrijo', 'Arroz, frijoles, chicharron, pico de gallo y tortilla tostada.', 3200, 15, 5, 'Baja', NULL, true),
+(4, 'Fresco de cas', 'Fresco natural de cas preparado al momento.', 1000, 4, 10, 'Critica', NULL, true),
+(4, 'Cafe chorreado', 'Cafe costarricense chorreado, negro o con leche.', 800, 30, 10, 'Baja', NULL, true),
+(5, 'Arroz con leche', 'Arroz con leche casero con canela.', 1200, 6, 8, 'Media', NULL, true),
+(5, 'Tres leches', 'Porcion de queque tres leches con merengue.', 1500, 0, 4, 'Media', NULL, true);
+
+-- Insercion de proveedores
+INSERT INTO proveedor (nombre, contacto, telefono, correo, productos, activo) VALUES
+('Verduleria El Mercado', 'Carlos Rojas', '8811-2233', 'ventas@elmercado.cr', 'Verduras, platano, yuca, chayote', true),
+('Lacteos La Montana', 'Marta Solis', '8722-4455', 'pedidos@lamontana.cr', 'Natilla, queso tierno, leche', true),
+('Cafe Tarrazu Directo', 'Luis Mora', '8633-6677', NULL, 'Cafe molido', true);

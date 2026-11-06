@@ -8,15 +8,9 @@
     <body>
         <header th:replace="~{general/fragmentos :: header}"/>
 
-        <section class="container py-5">
-            <div class="p-5 bg-white rounded shadow-sm text-center">
-                <h2 class="text-soda">[[#{index.bienvenida}]]</h2>
-                <p class="lead">[[#{index.descripcion}]]</p>
-                <a class="btn btn-soda" th:href="@{/categoria/listado}">
-                    <i class="fa-solid fa-layer-group"></i> [[#{plantilla.categorias}]]
-                </a>
-            </div>
-        </section>
+        <section th:replace="~{menu/fragmentos :: tabs}"/>
+        <section th:replace="~{menu/fragmentos :: tarjetas}"/>
+        <section th:replace="~{general/fragmentos :: mostrarToast}"/>
 
         <footer th:replace="~{general/fragmentos :: footer}"/>
     </body>
